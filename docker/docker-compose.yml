@@ -1,0 +1,20 @@
+version: '2'
+services:
+  data:
+    image: busybox
+    volumes:
+      - ./misc/data:/var/lib/mysql
+  mysql:
+    build: ./mysql
+    command: mysqld
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: todo
+      MYSQL_USER: todouser
+      MYSQL_PASSWORD: todopass
+    ports:
+      - "13306:13306"
+    volumes_from:
+      - data
+    container_name: mysql
+    
