@@ -4,8 +4,23 @@ services:
     image: busybox
     volumes:
       - ./misc/data:/var/lib/mysql
+
+  web:
+    build: ./web
+    container_name: web
+    command: DEBUG=tokyo-office:* npm start:dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../:/var/www/apps
+    working_dir: /var/www/apps
+    command: [sh, -c, npm install && npm start]
+    networks:
+      - todo-net
+
   mysql:
     build: ./mysql
+    container_name: mysql
     command: mysqld
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -16,5 +31,17 @@ services:
       - "13306:13306"
     volumes_from:
       - data
-    container_name: mysql
-    
+    networks:
+      - todo-net
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "10080:80"
+    networks:
+      - todo-net
+
+networks:
+  todo-net:
+    driver: bridge
